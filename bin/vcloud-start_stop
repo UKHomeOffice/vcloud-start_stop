@@ -9,17 +9,19 @@ class App
   include Methadone::CLILogging
 
   main do |status|
-    opt = Hash.new
+    op_list = Hash.new
     exit_now!(1, "Can't define power vdc and vapps choose one or the other") if options[:power_vdc] and options[:vapps]
     exit_now!(1, "You must define status as start or stop") unless status.downcase =~ /st(art|op)/
-    exit_now!(1, "You must define power_vdc or vapps, you defined neither") if not options[:power_vdc] or options[:vapps]
-
+    exit_now!(1, "You must define power_vdc or vapps, you defined neither") if not options[:power_vdc] and not options[:vapps]
+    
     %w(user password host org vdc).each do |op|
       state(op) unless options[op]
     end
 
-    opt = {:power_vdc => true } if options[:power_vdc]
-    opt = {:vapps => options[:vapps] } if options[:vapps]
+    if options[:vapps]
+      op_list[:vapps] = options[:vapps].split(',').map(&:strip).reject { |c| c.empty? }
+    end
+    op_list[:power_vdc] = options[:power_vdc] if options[:power_vdc]
 
     sfunc = Vcloud::StartStop::Run.new(options[:user],
                                        options[:password],
@@ -27,7 +29,7 @@ class App
                                        options[:org],
                                        options[:vdc],
                                        status,
-                                       opt)
+                                       op_list)
     sfunc.run
   end
 
@@ -45,7 +47,7 @@ class App
   on("-o ORG", "--org", "The name of the organization")
   on("-v VDC", "--vdc", "The name of the VDC")
   on("--power_vdc", "Stop entire VDC")
-  on("--vapps VAPPS", "List of the vapps to start / stop")
+  on("--vapps VAPP1,VAPP2", "--vapps", "List of the vapps either quoted comma separated list with spaces or unquoted without spaces vapp,vapp2,vapp3 or \"vapp1, vapp2, vapp3\"")
     
   arg :status, "Start or Stop"
   version Vcloud::StartStop::VERSION
