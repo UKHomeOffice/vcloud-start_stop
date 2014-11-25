@@ -6,7 +6,6 @@ module Vcloud
       def initialize(user, pass, host, org, status, vdc, opts = {})
         @org    = org
         @status = status.downcase
-        @vapps  = vapps
         @vdc    = vdc
         @vapps  = opts[:vapps] ? opts[:vapps] : false
         @power_vdc = opts[:power_vdc] ? opts[:power_vdc] : false
