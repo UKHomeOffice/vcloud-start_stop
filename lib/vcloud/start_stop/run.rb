@@ -3,7 +3,7 @@ require "fog"
 module Vcloud
   module StartStop
     class Run
-      def initialize(user, pass, host, org, status, vdc, opts = {})
+      def initialize(user, pass, host, org, vdc, status, opts = {})
         @org    = org
         @status = status.downcase
         @vdc    = vdc
