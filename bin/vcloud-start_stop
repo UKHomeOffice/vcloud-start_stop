@@ -21,12 +21,12 @@ class App
     opt = {:power_vdc => true } if options[:power_vdc]
     opt = {:vapps => options[:vapps] } if options[:vapps]
 
-    sfunc = Vcloud::StartStop::StartStop.new(options[:user],
-                                  options[:pass],
-                                  options[:host],
-                                  options[:org],
-                                  options[:vdc],
-                                  opt)
+    sfunc = Vcloud::StartStop::Run.new(options[:user],
+                                       options[:pass],
+                                       options[:host],
+                                       options[:org],
+                                       options[:vdc],
+                                       opt)
     sfunc.run
   end
 
