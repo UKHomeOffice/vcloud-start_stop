@@ -16,13 +16,13 @@ module Vcloud
 
       def run
         org = @vcloud.organizations.get_by_name(@org)
-        vdc = org.vdcz.get_by_name(@vdc)
+        vdc = org.vdcs.get_by_name(@vdc)
        
         vapps.each { |vapp_sd| vdc.vapps.get_by_name(vapp_sd).power_off } if @vapps and @status.match('stop')
         vapps.each { |vapp_sd| vdc.vapps.get_by_name(vapp_sd).power_on } if @vapps and @status.match('start')
         
-        vdc.power_off if @power_vdc and @status.match('stop')
-        vdc_power_on if @power_vdc and not @status.match('start')
+        vdc.vapps.each { |vapp| vapp.power_off } if @power_vdc and @status.match('stop')
+        vdc.vapps_each { |vapp| vapp.power_on } if @power_vdc and not @status.match('start')
       end
     end 
   end
