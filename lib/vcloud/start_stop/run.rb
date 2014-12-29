@@ -21,8 +21,27 @@ module Vcloud
         vdc = org.vdcs.get_by_name(@vdc)
         raise "No such VDC: #{@vdc}" if vdc.nil?
         
-        @vapps.each { |vapp_sd| vdc.vapps.get_by_name(vapp_sd).power_off } if @vapps and @status.match('stop')
-        @vapps.each { |vapp_sd| vdc.vapps.get_by_name(vapp_sd).power_on } if @vapps and @status.match('start')
+        if @vapps and @status.match('stop')
+          @vapps.each do |vapp_sd|
+            if vdc.vapps.get_by_name(vapp_sd).nil?
+              puts "#{vapp_sd} Doesn't exist.. moving on"
+              next
+            end
+            puts "Powering off #{vapp_sd}.."
+            vdc.vapps.get_by_name(vapp_sd).power_off
+          end
+        end
+
+        if @vapps and @status.match('start')
+          @vapps.each do |vapp_sd|
+            if vdc.vapps.get_by_name(vapp_sd).nil?
+              puts "#{vapp_sd} Doesn't exist.. moving on"
+              next
+            end
+            puts "Powering on #{vapp_sd}.."
+            vdc.vapps.get_by_name(vapp_sd).power_on
+          end
+        end
         
         vdc.vapps.each { |vapp| vapp.power_off } if @power_vdc and @status.match('stop')
         vdc.vapps_each { |vapp| vapp.power_on } if @power_vdc and not @status.match('start')
