@@ -13,7 +13,6 @@ class App
     exit_now!(1, "Can't define power vdc and vapps choose one or the other") if options[:power_vdc] and options[:vapps]
     exit_now!(1, "You must define status as start or stop") unless status.downcase =~ /st(art|op)/
     exit_now!(1, "You must define power_vdc or vapps, you defined neither") if not options[:power_vdc] and not options[:vapps]
-    exit_now!(1, "You must specify the org numerical name not the org description name") if options[:org] =~ /\w+/
     
     %w(user password host org vdc).each do |op|
       state(op) unless options[op]
