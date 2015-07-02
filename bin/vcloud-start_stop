@@ -11,7 +11,7 @@ class App
   main do |status|
     op_list = Hash.new
     exit_now!(1, "Can't define power vdc and vapps choose one or the other") if options[:power_vdc] and options[:vapps]
-    exit_now!(1, "You must define status as start or stop") unless status.downcase =~ /st(art|op)/
+    exit_now!(1, "You must define status as start or stop or destroy") unless status.downcase =~ /st(art|op)/ || status.downcase == 'destroy'
     exit_now!(1, "You must define power_vdc or vapps, you defined neither") if not options[:power_vdc] and not options[:vapps]
     
     %w(user password host org vdc).each do |op|
@@ -22,7 +22,6 @@ class App
       op_list[:vapps] = options[:vapps].split(',').map(&:strip).reject { |c| c.empty? }
     end
     op_list[:power_vdc] = options[:power_vdc] if options[:power_vdc]
-
     sfunc = Vcloud::StartStop::Run.new(options[:user],
                                        options[:password],
                                        options[:host],
@@ -49,7 +48,7 @@ class App
   on("--power_vdc", "Stop entire VDC")
   on("--vapps VAPP1,VAPP2", "--vapps", "List of the vapps either quoted comma separated list with spaces or unquoted without spaces vapp,vapp2,vapp3 or \"vapp1, vapp2, vapp3\"")
     
-  arg :status, "Start or Stop"
+  arg :status, "Start or Stop or Destroy"
   version Vcloud::StartStop::VERSION
 
   use_log_level_option :toggle_debug_on_signal => 'USR1'

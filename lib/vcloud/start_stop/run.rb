@@ -32,6 +32,19 @@ module Vcloud
           end
         end
 
+        if @vapps and @status.match('destroy')
+          @vapps.each do |vapp_sd|
+            if vdc.vapps.get_by_name(vapp_sd).nil?
+              puts "#{vapp_sd} Doesn't exist.. moving on"
+              next
+            end
+            puts "Suspending #{vapp_sd}.."
+            vdc.vapps.get_by_name(vapp_sd).undeploy
+            puts "Destroying #{vapp_sd}.."
+            vdc.vapps.get_by_name(vapp_sd).destroy
+          end
+        end
+
         if @vapps and @status.match('start')
           @vapps.each do |vapp_sd|
             if vdc.vapps.get_by_name(vapp_sd).nil?
